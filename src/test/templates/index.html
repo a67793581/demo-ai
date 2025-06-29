@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang='zh-CN'>
+<head>
+    <meta charset='UTF-8'>
+    <title>AI 教学动画平台 DEMO</title>
+    <script src="/static/ai_demo.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 2em; }
+        input, button, select { margin: 0.2em; }
+        .result { background: #f7f7f7; border: 1px solid #ccc; padding: 1em; margin-top: 1em; }
+    </style>
+</head>
+<body>
+    <h2>AI 教学动画平台 DEMO</h2>
+    <div>
+        <label>用户ID: <input id="user_id" value="user123"></label>
+    </div>
+    <div>
+        <label>输入类型:
+            <select id="input_type">
+                <option value="text">文字</option>
+                <option value="image">图片</option>
+            </select>
+        </label>
+    </div>
+    <div>
+        <label>输入内容: <input id="input_content" style="width:300px" value="请生成一个关于Python编程的教学动画"></label>
+    </div>
+    <button onclick="submitTask()">提交任务</button>
+    <hr>
+    <div>
+        <label>任务ID: <input id="query_task_id" style="width:220px"></label>
+        <button onclick="queryStatus()">查询任务状态</button>
+    </div>
+    <hr>
+    <div>
+        <button onclick="listTasks()">获取任务列表</button>
+    </div>
+    <div class="result" id="result"></div>
+</body>
+</html> 
