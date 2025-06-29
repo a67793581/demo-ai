@@ -1,0 +1,10 @@
+# 依赖层Dockerfile
+FROM python:3.13-slim
+
+WORKDIR /app
+
+# 安装Poetry
+RUN pip install poetry
+
+# 配置Poetry不创建虚拟环境
+RUN poetry config virtualenvs.create false

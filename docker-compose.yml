@@ -1,0 +1,72 @@
+services:
+  web:
+    image: app:latest
+    command: uvicorn test.main:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - ./src:/app/src
+      - ./.env:/app/.env
+    ports:
+      - 8000:8000
+    environment:
+      - DOCKER_ENV=true
+    depends_on:
+      redis:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/health')\""]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  worker:
+    image: app:latest
+    command: celery -A test.celery_app worker --loglevel=info
+    volumes:
+      - ./src:/app/src
+      - ./.env:/app/.env
+    environment:
+      - DOCKER_ENV=true
+    depends_on:
+      redis:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "celery", "-A", "test.celery_app", "inspect", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  redis:
+    image: "redis:alpine"
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  mongodb:
+    image: "mongo:7.0"
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+    volumes:
+      - mongodb_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--username", "admin", "--password", "password", "--authenticationDatabase", "admin", "--eval", "db.adminCommand('ping')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  mongodb_data:

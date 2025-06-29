@@ -1,0 +1,27 @@
+[project]
+name = "test"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Carlo",email = "jiangbingjie1218@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi[all] (>=0.115.14,<0.116.0)",
+    "celery[redis] (>=5.5.3,<6.0.0)",
+    "requests (>=2.31.0,<3.0.0)",
+    "redis (>=5.0.0,<6.0.0)",
+    "pydantic (>=2.0.0,<3.0.0)",
+    "pymongo (>=4.6.0,<5.0.0)",
+    "pydantic-settings (>=2.0.0,<3.0.0)"
+]
+
+[tool.poetry]
+packages = [
+    {include = "test", from = "src"}
+]
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
