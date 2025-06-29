@@ -1,7 +1,164 @@
+// 全局变量
+let isInputValid = false;
+
+// 输入类型改变时的处理
+function onInputTypeChange() {
+    const inputType = document.getElementById('input_type').value;
+    const inputContent = document.getElementById('input_content');
+    const inputHint = document.getElementById('input_hint');
+    const inputContentLabel = document.getElementById('input_content_label');
+    
+    if (inputType === 'image') {
+        inputContentLabel.textContent = '图片URL:';
+        inputContent.placeholder = '请输入图片URL (支持 jpg, png, gif, bmp, webp, svg)';
+        inputHint.textContent = '请输入有效的图片URL，支持HTTP/HTTPS协议，最大文件大小10MB';
+        inputContent.value = 'https://example.com/image.jpg';
+    } else {
+        inputContentLabel.textContent = '输入内容:';
+        inputContent.placeholder = '请输入文字内容或图片URL';
+        inputHint.textContent = '请输入要生成动画的文字描述';
+        inputContent.value = '请生成一个关于Python编程的教学动画';
+    }
+    
+    // 重置验证状态
+    isInputValid = false;
+    updateValidationMessage('', '');
+    updateSubmitButton();
+}
+
+// 验证输入内容
+async function validateInput() {
+    const inputType = document.getElementById('input_type').value;
+    const inputContent = document.getElementById('input_content').value.trim();
+    
+    if (!inputContent) {
+        updateValidationMessage('输入内容不能为空', 'error');
+        isInputValid = false;
+        updateSubmitButton();
+        return;
+    }
+    
+    if (inputType === 'image') {
+        await validateImageUrl(inputContent);
+    } else {
+        // 文字类型的基本验证
+        if (inputContent.length < 5) {
+            updateValidationMessage('文字内容至少需要5个字符', 'error');
+            isInputValid = false;
+        } else {
+            updateValidationMessage('✓ 文字内容格式正确', 'success');
+            isInputValid = true;
+        }
+        updateSubmitButton();
+    }
+}
+
+// 验证图片URL
+async function validateImageUrl(url) {
+    updateValidationMessage('⏳ 正在验证图片URL...', 'info');
+    
+    try {
+        // 基本URL格式验证
+        if (!isValidUrl(url)) {
+            updateValidationMessage('❌ URL格式不正确，请检查协议和域名', 'error');
+            isInputValid = false;
+            updateSubmitButton();
+            return;
+        }
+        
+        // 检查文件扩展名
+        const supportedFormats = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp', '.svg'];
+        const urlLower = url.toLowerCase();
+        const hasValidExtension = supportedFormats.some(ext => urlLower.includes(ext));
+        
+        if (!hasValidExtension) {
+            updateValidationMessage(`❌ 不支持的图片格式，支持的格式: ${supportedFormats.join(', ')}`, 'error');
+            isInputValid = false;
+            updateSubmitButton();
+            return;
+        }
+        
+        // 尝试访问图片URL
+        const response = await fetch(url, { method: 'HEAD' });
+        
+        if (response.ok) {
+            const contentType = response.headers.get('content-type');
+            if (contentType && contentType.startsWith('image/')) {
+                const contentLength = response.headers.get('content-length');
+                if (contentLength) {
+                    const fileSize = parseInt(contentLength);
+                    const maxSize = 10 * 1024 * 1024; // 10MB
+                    if (fileSize > maxSize) {
+                        updateValidationMessage(`❌ 图片文件过大，最大支持 ${maxSize / (1024*1024)}MB`, 'error');
+                        isInputValid = false;
+                    } else {
+                        updateValidationMessage(`✓ 图片验证通过 (${(fileSize/1024/1024).toFixed(2)}MB)`, 'success');
+                        isInputValid = true;
+                    }
+                } else {
+                    updateValidationMessage('✓ 图片验证通过', 'success');
+                    isInputValid = true;
+                }
+            } else {
+                updateValidationMessage('❌ URL指向的不是图片文件', 'error');
+                isInputValid = false;
+            }
+        } else {
+            updateValidationMessage(`❌ 图片访问失败，HTTP状态码: ${response.status}`, 'error');
+            isInputValid = false;
+        }
+    } catch (error) {
+        updateValidationMessage(`❌ 图片验证失败: ${error.message}`, 'error');
+        isInputValid = false;
+    }
+    
+    updateSubmitButton();
+}
+
+// 验证URL格式
+function isValidUrl(string) {
+    try {
+        const url = new URL(string);
+        return url.protocol === 'http:' || url.protocol === 'https:';
+    } catch (_) {
+        return false;
+    }
+}
+
+// 更新验证消息
+function updateValidationMessage(message, type) {
+    const validationDiv = document.getElementById('validation_message');
+    validationDiv.textContent = message;
+    validationDiv.className = `validation-${type}`;
+}
+
+// 更新提交按钮状态
+function updateSubmitButton() {
+    const submitBtn = document.getElementById('submit_btn');
+    submitBtn.disabled = !isInputValid;
+}
+
 async function submitTask() {
     const user_id = document.getElementById('user_id').value;
     const input_type = document.getElementById('input_type').value;
-    const input_content = document.getElementById('input_content').value;
+    const input_content = document.getElementById('input_content').value.trim();
+    
+    // 前端验证
+    if (!user_id) {
+        showResult('❌ 请填写用户ID');
+        return;
+    }
+    
+    if (!input_content) {
+        showResult('❌ 请填写输入内容');
+        return;
+    }
+    
+    if (!isInputValid) {
+        showResult('❌ 请先验证输入内容');
+        return;
+    }
+    
     const payload = { user_id, input_type, input_content };
     showResult('⏳ 正在提交任务...');
     
@@ -11,6 +168,12 @@ async function submitTask() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
+        
+        if (!resp.ok) {
+            const errorData = await resp.json();
+            throw new Error(errorData.detail || `HTTP ${resp.status}`);
+        }
+        
         const data = await resp.json();
         showResult('✅ 任务已提交:\n' + JSON.stringify(data, null, 2));
         if (data.task_id) {

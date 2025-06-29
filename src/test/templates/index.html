@@ -5,37 +5,123 @@
     <title>AI 教学动画平台 DEMO</title>
     <script src="/static/ai_demo.js"></script>
     <style>
-        body { font-family: Arial, sans-serif; margin: 2em; }
-        input, button, select { margin: 0.2em; }
-        .result { background: #f7f7f7; border: 1px solid #ccc; padding: 1em; margin-top: 1em; }
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 2em; 
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 2em;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        input, button, select { 
+            margin: 0.5em; 
+            padding: 0.5em;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        button:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+        .result { 
+            background: #f7f7f7; 
+            border: 1px solid #ccc; 
+            padding: 1em; 
+            margin-top: 1em;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+        .form-group {
+            margin-bottom: 1em;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.3em;
+            font-weight: bold;
+        }
+        .input-hint {
+            font-size: 0.8em;
+            color: #666;
+            margin-top: 0.2em;
+        }
+        .validation-error {
+            color: #dc3545;
+            font-size: 0.9em;
+            margin-top: 0.2em;
+        }
+        .validation-success {
+            color: #28a745;
+            font-size: 0.9em;
+            margin-top: 0.2em;
+        }
+        .status-finished { border-left: 4px solid #28a745; }
+        .status-failed { border-left: 4px solid #dc3545; }
+        .status-processing { border-left: 4px solid #ffc107; }
+        .status-queued { border-left: 4px solid #17a2b8; }
     </style>
 </head>
 <body>
-    <h2>AI 教学动画平台 DEMO</h2>
-    <div>
-        <label>用户ID: <input id="user_id" value="user123"></label>
-    </div>
-    <div>
-        <label>输入类型:
-            <select id="input_type">
+    <div class="container">
+        <h2>AI 教学动画平台 DEMO</h2>
+        
+        <div class="form-group">
+            <label>用户ID:</label>
+            <input id="user_id" value="user123" placeholder="请输入用户ID">
+        </div>
+        
+        <div class="form-group">
+            <label>输入类型:</label>
+            <select id="input_type" onchange="onInputTypeChange()">
                 <option value="text">文字</option>
                 <option value="image">图片</option>
             </select>
-        </label>
+        </div>
+        
+        <div class="form-group">
+            <label id="input_content_label">输入内容:</label>
+            <input id="input_content" style="width:100%" 
+                   value="请生成一个关于Python编程的教学动画" 
+                   placeholder="请输入文字内容或图片URL"
+                   onblur="validateInput()">
+            <div id="input_hint" class="input-hint">
+                请输入要生成动画的文字描述
+            </div>
+            <div id="validation_message"></div>
+        </div>
+        
+        <button id="submit_btn" onclick="submitTask()">提交任务</button>
+        
+        <hr>
+        
+        <div class="form-group">
+            <label>任务ID:</label>
+            <input id="query_task_id" style="width:300px" placeholder="请输入任务ID">
+            <button onclick="queryStatus()">查询任务状态</button>
+        </div>
+        
+        <hr>
+        
+        <div class="form-group">
+            <button onclick="listTasks()">获取任务列表</button>
+        </div>
+        
+        <div class="result" id="result"></div>
     </div>
-    <div>
-        <label>输入内容: <input id="input_content" style="width:300px" value="请生成一个关于Python编程的教学动画"></label>
-    </div>
-    <button onclick="submitTask()">提交任务</button>
-    <hr>
-    <div>
-        <label>任务ID: <input id="query_task_id" style="width:220px"></label>
-        <button onclick="queryStatus()">查询任务状态</button>
-    </div>
-    <hr>
-    <div>
-        <button onclick="listTasks()">获取任务列表</button>
-    </div>
-    <div class="result" id="result"></div>
 </body>
 </html> 

@@ -44,7 +44,7 @@ def perform_ocr(image_url: str) -> str:
     if random.random() < task_cfg.OCR_FAILURE_RATE:
         raise Exception(error_cfg.ERROR_OCR_FAILED)
     
-    return "Text content extracted from image"
+    return "从图片中提取的文本内容"
 
 def generate_prompt(text_content: str) -> str:
     """Generate prompt for video platform"""
@@ -53,7 +53,7 @@ def generate_prompt(text_content: str) -> str:
     if random.random() < task_cfg.PROMPT_FAILURE_RATE:
         raise Exception(error_cfg.ERROR_PROMPT_FAILED)
     
-    return f"Animation prompt based on text: {text_content}"
+    return f"基于文本的动画提示词: {text_content}"
 
 def call_video_platform_api(prompt: str) -> str:
     """Call video platform API to generate animation"""

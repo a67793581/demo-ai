@@ -8,7 +8,7 @@ class DBConfig(BaseConfig):
     MONGO_COLLECTION: str = Field(default="tasks", description="MongoDB collection name")
     CONNECTION_TIMEOUT: int = Field(default=5000, description="MongoDB connection timeout in milliseconds")
     
-    # MongoDB认证配置
+    # MongoDB authentication configuration
     MONGO_USERNAME: str = Field(default="admin", description="MongoDB username")
     MONGO_PASSWORD: str = Field(default="password", description="MongoDB password")
     MONGO_AUTH_DATABASE: str = Field(default="admin", description="MongoDB authentication database")

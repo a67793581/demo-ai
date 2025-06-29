@@ -7,7 +7,7 @@ from ai_animation.config import settings
 import os
 
 def settings_to_dict(obj):
-    # 递归遍历 settings 的所有属性，收集 model_dump() 内容
+    # Recursively traverse all attributes of settings, collect model_dump() content
     result = {}
     for attr in dir(obj):
         if attr.startswith('_') or attr == 'model_dump':

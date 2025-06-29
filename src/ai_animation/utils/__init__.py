@@ -1,5 +1,7 @@
 """
-Utility functions for AI Animation Platform
+AI Animation Utils Module
 """
 
-__all__ = [] 
+from .image_validator import ImageValidator
+
+__all__ = ['ImageValidator'] 
