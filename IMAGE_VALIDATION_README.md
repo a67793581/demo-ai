@@ -8,7 +8,7 @@ AI动画生成平台现在支持图片输入，并提供了完整的图片验证
 
 ### 1. 前端验证 (JavaScript)
 
-**位置**: `src/test/static/ai_demo.js`
+**位置**: `src/demo_ai/static/ai_demo.js`
 
 **功能**:
 - URL格式验证

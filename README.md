@@ -40,7 +40,7 @@
 ## 📁 项目结构
 
 ```
-test/
+demo-ai/
 ├── src/
 │   ├── ai_animation/
 │   │   ├── api/                 # API 层
@@ -59,7 +59,7 @@ test/
 │   │   ├── storage/             # 存储层 (独立模块)
 │   │   │   └── storage.py       # MongoDB 存储实现
 │   │   └── utils/               # 工具模块
-│   └── test/
+│   └── demo_ai/
 │       ├── celery_app.py        # Celery 应用配置
 │       ├── main.py              # FastAPI 主应用
 │       ├── static/              # 静态文件
@@ -87,8 +87,8 @@ test/
 ### 1. 克隆项目
 
 ```bash
-git clone <repository-url>
-cd test
+git clone https://github.com/a67793581/demo-ai.git
+cd demo-ai
 ```
 
 ### 2. 构建镜像
@@ -131,10 +131,10 @@ docker-compose up -d redis mongodb
 3. **启动应用服务**
 ```bash
 # 启动 FastAPI 服务
-PYTHONPATH=src poetry run uvicorn test.main:app --host 0.0.0.0 --port 8000 --reload
+PYTHONPATH=src poetry run uvicorn demo_ai.main:app --host 0.0.0.0 --port 8000 --reload
 
 # 启动 Celery Worker (新终端)
-PYTHONPATH=src poetry run celery -A test.celery_app worker --loglevel=info
+PYTHONPATH=src poetry run celery -A demo_ai.celery_app worker --loglevel=info
 ```
 
 ## 📊 服务监控

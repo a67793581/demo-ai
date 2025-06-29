@@ -1,4 +1,4 @@
-from test.celery_app import celery_app
+from demo_ai.celery_app import celery_app
 from ai_animation.storage.storage import storage
 from ..config import settings
 import time

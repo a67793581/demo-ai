@@ -1,7 +1,7 @@
 services:
   web:
     image: app:latest
-    command: uvicorn test.main:app --host 0.0.0.0 --port 8000 --reload
+    command: uvicorn demo_ai.main:app --host 0.0.0.0 --port 8000 --reload
     volumes:
       - ./src:/app/src
       - ./.env:/app/.env
@@ -23,7 +23,7 @@ services:
 
   worker:
     image: app:latest
-    command: celery -A test.celery_app worker --loglevel=info
+    command: celery -A demo_ai.celery_app worker --loglevel=info
     volumes:
       - ./src:/app/src
       - ./.env:/app/.env
@@ -35,7 +35,7 @@ services:
       mongodb:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "celery", "-A", "test.celery_app", "inspect", "ping"]
+      test: ["CMD", "celery", "-A", "demo_ai.celery_app", "inspect", "ping"]
       interval: 30s
       timeout: 10s
       retries: 3

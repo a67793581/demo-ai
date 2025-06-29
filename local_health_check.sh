@@ -52,7 +52,7 @@ else
 fi
 
 # 检查 Celery Worker
-if docker-compose exec -T worker celery -A test.celery_app inspect ping >/dev/null 2>&1; then
+if docker-compose exec -T worker celery -A demo_ai.celery_app inspect ping >/dev/null 2>&1; then
     echo -e "${GREEN}✅ Celery Worker 正常${NC}"
 else
     echo -e "${RED}❌ Celery Worker 异常${NC}"
